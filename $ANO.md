@@ -1567,6 +1567,3 @@ A release schedule that controls when allocated tokens may become available.
 
 The process of preparing product, security, legal, liquidity, user and compliance materials so that the project may be evaluated by centralized exchanges. It is not a guarantee of listing.
 
----
-
-## End of Document
