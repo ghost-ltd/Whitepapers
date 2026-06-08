@@ -8,11 +8,11 @@
 **Contract Address:** `0xD1C4B3DBedB71545F7464A79021ca7c365926eA9`  
 **Primary Product:** Ghost App  
 **Native Wallet:** Lucid Wallet by Imagine  
-**Draft Version:** v0.9  
+**File Version:** v0.9  
 **Date:** June 2026  
 **Copyright:** All rights reserved © Imagine Tech Limited 2026
 
-> This draft is written as a professional whitepaper foundation. Before public release, all token metadata, supply figures, wallet addresses, vesting terms, fee routing, product availability, jurisdictional restrictions, audit status, exchange strategy and legal language must be verified by the project team and qualified legal counsel.
+> This file is written as a professional whitepaper foundation. Before public release, all token metadata, supply figures, wallet addresses, vesting terms, fee routing, product availability, jurisdictional restrictions, audit status, exchange strategy and legal language must be verified by the project team and qualified legal counsel.
 
 ---
 
@@ -929,7 +929,7 @@ Transparency does not require revealing sensitive operational details. It requir
 
 A small ecosystem fee may be applied to selected in-app economic actions. The purpose of the fee is to support platform sustainability, developer rewards, social impact, staking incentives, security, innovation and long-term treasury health.
 
-The current draft references a 1.5% ecosystem fee. Before publication, the project must reconcile the complete fee-routing table so that all percentages total exactly 100% of the fee and all destinations are defined.
+The current file references a 1.5% ecosystem fee. Before publication, the project must reconcile the complete fee-routing table so that all percentages total exactly 100% of the fee and all destinations are defined.
 
 ## 10.17 Example Fee Routing Table
 
@@ -1298,7 +1298,7 @@ If executed responsibly, $ANO can become more than an asset inside an app. It ca
 
 ## 16.1 Appendix A: Token Contract Details
 
-| Field | Current Draft Value | Publication Status |
+| Field | Current file Value | Publication Status |
 |---|---|---|
 | Token Name | ANO | To verify |
 | Symbol | $ANO | To verify |
