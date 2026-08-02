@@ -313,7 +313,7 @@ A strong continuity model gives users freedom without creating invisible risk.
 
 ### 4.1 Privacy-Preserving Architecture
 
-Ghost App's privacy model is based on client-side protection, data minimization and user-controlled identity. Servers may coordinate registration, message delivery, encrypted payload routing, prekey distribution, notifications and account state, but private content should remain encrypted before it reaches infrastructure.
+Ghost App's privacy model is based on client-side protection, data minimization and user-controlled identity. Servers may coordinate registration, message delivery, encrypted payload routing, Ghost Core session-material publication, notifications and account state, but private content should remain encrypted before it reaches infrastructure.
 
 The platform should not need to read private messages in order to function. This principle reduces user reliance on server trust and strengthens the product's credibility.
 
@@ -389,27 +389,33 @@ Ghost App assumes that attackers may attempt to compromise users, devices, sessi
 
 A strong threat model does not assume that every user will behave perfectly. It assumes that users may click quickly, trust familiar names, reuse devices, ignore warnings or misunderstand wallet signatures. For that reason, Ghost App should make dangerous actions harder to perform silently.
 
-### 5.3 Signal-Style End-to-End Encryption
+### 5.3 Ghost Core End-to-End Encryption
 
-Ghost App's messaging layer should follow a Signal-style secure messaging architecture. In practical terms, this means encrypted sessions can be established using identity keys, signed prekeys, one-time prekeys, X3DH-style session establishment and Double Ratchet message encryption.
+Ghost App's messaging layer is designed around Ghost Core, a first-party Rust security engine developed by the Ghost team. Ghost Core uses a fixed protocol profile called GhostProtocol 1 so that accepted messages follow one bounded, testable security contract instead of a menu of optional or legacy fallback modes.
 
-This type of architecture allows secure asynchronous messaging. Users do not need to be online at the same time to establish encrypted sessions, and message keys can evolve over time to limit the damage of future key exposure.
+In practical terms, Ghost Core treats a private message as a protected state transition rather than only as encrypted text. The native core is intended to bind device identity, session establishment, key evolution, message release, replay decisions and durable state commits into one security model. This lets Ghost App position its encryption architecture as proprietary, testable and internally controlled.
 
-### 5.4 X3DH Session Establishment
+This is not a claim that Ghost Core is invulnerable. The accurate product claim is that Ghost Core implements an ambitious first-party security architecture whose audit, formal review, mobile storage review, penetration testing and production evidence gates must continue to mature before stronger assurance language is used publicly.
 
-X3DH, the Extended Triple Diffie-Hellman key agreement protocol, is used in Signal-style systems to establish a shared secret between parties authenticated through public keys. This provides the foundation for encrypted sessions between users who may not be simultaneously online.
+### 5.4 Hybrid Session Establishment and Witnessed Trust
 
-For Ghost App, X3DH-style session establishment is valuable because messaging must remain usable in real-world conditions. Users may send messages while the recipient is offline, while still expecting confidentiality and identity-based trust.
+Ghost Core is designed to combine classical cryptography with standardized post-quantum cryptography. The current architecture described in Ghost Core materials combines X448 and ML-KEM-1024 for session establishment, Ed448 and ML-DSA-87 for device authentication, SLH-DSA-based account generation roots, and domain-separated HKDF-SHA-512 derivations that bind key material to the full protocol transcript.
 
-### 5.5 Double Ratchet and Forward Secrecy
+Identity discovery is designed around witnessed Key Transparency rather than blind trust in a single directory. Account roots, active devices, temporary key publications, revocations and generation changes are intended to be committed into a reviewable history. Clients should verify signed checkpoints and witness evidence, while stale or conflicting views should trigger quarantine or user review instead of quiet acceptance.
 
-The Double Ratchet mechanism continuously updates cryptographic material after a session is established. This limits the damage of a future key compromise by preventing a single exposed key from automatically decrypting an entire historical conversation.
+This model supports asynchronous messaging without describing Ghost App as dependent on another messaging protocol. Temporary session material can be published for offline establishment, but it is treated as consumable security state rather than reusable infrastructure inventory.
 
-Forward secrecy is critical for a privacy-focused messenger. It means the architecture is designed so that one failure should not expose everything forever.
+### 5.5 Continuous Hybrid State Evolution and Forward Secrecy
+
+Ghost Core maintains a continuous hybrid state-evolution model for private conversations. Each authenticated transition advances the conversation state and derives fresh message material so there is no single permanent message key that remains valid for an entire conversation.
+
+At a high level, Ghost Core materials describe a symmetric chain that advances for each message, fresh classical agreement during interactive transitions, continuous post-quantum input as peers interact, and authenticated transcript mixing before the next state is derived. Message fragments receive distinct encryption and commitment material, with AES-256-GCM-SIV used for nonce-misuse-resistant authenticated encryption in the current design.
+
+Forward secrecy remains critical for a privacy-focused messenger. The architecture is designed so that one exposed message secret should not automatically expose every past or future message. At the same time, Ghost App should state the limit honestly: post-compromise healing requires new unpredictable input from the other participant, and no asynchronous design can invent fresh peer entropy from silence.
 
 ### 5.6 Server as Relay, Not Trusted Reader
 
-The server's role should be limited by design. It may assist with registration, encrypted payload delivery, notification coordination, prekey distribution, session routing and device synchronization. It should not be able to decrypt private message content.
+The server's role should be limited by design. It may assist with registration, encrypted payload delivery, notification coordination, Ghost Core session-material publication, session routing and device synchronization. It should not be able to decrypt private message content.
 
 This distinction matters for trust. In many platforms, users must trust the server not to read, analyze or monetize communication. Ghost App should reduce that dependency by designing infrastructure that does not need message access to function.
 
@@ -1424,8 +1430,13 @@ Challenge2Earn features may be restricted by jurisdiction and should be treated 
 
 ### 16.11 Appendix K: External Technical References
 
-- Signal X3DH Specification: <https://signal.org/docs/specifications/x3dh/>
-- Signal Double Ratchet Specification: <https://signal.org/docs/specifications/doubleratchet/>
+- Ghost Core official area: <https://ghost-os.org/ghost-core>
+- NIST FIPS 203, Module-Lattice-Based Key-Encapsulation Mechanism Standard: <https://csrc.nist.gov/pubs/fips/203/final>
+- NIST FIPS 204, Module-Lattice-Based Digital Signature Standard: <https://csrc.nist.gov/pubs/fips/204/final>
+- NIST FIPS 205, Stateless Hash-Based Digital Signature Standard: <https://csrc.nist.gov/pubs/fips/205/final>
+- RFC 8452, AES-GCM-SIV: <https://www.rfc-editor.org/rfc/rfc8452>
+- RFC 9458, Oblivious HTTP: <https://www.rfc-editor.org/rfc/rfc9458>
+- RFC 9807, The OPAQUE Asymmetric PAKE Protocol: <https://www.rfc-editor.org/rfc/rfc9807>
 - BNB Smart Chain Documentation: <https://docs.bnbchain.org/>
 - BNB Smart Chain Overview: <https://www.bnbchain.org/en/bnb-smart-chain>
 - PancakeSwap Documentation: <https://docs.pancakeswap.finance/>
@@ -1487,17 +1498,25 @@ A broader macro-economy token referenced in project materials, subject to final 
 
 A communication security model in which message content is encrypted on the sender's device and decrypted only on the recipient's device. In Ghost App, E2EE is intended to reduce reliance on server trust by preventing infrastructure from reading private message content.
 
-### Signal Protocol
+### Ghost Core
 
-A secure messaging protocol model using identity keys, prekeys and ratcheting encryption to support private messaging.
+The first-party Ghost security engine for private communication. Ghost Core is designed as a Rust-based native core that coordinates session establishment, device identity, message protection, replay decisions, durable state transitions, witnessed trust and metadata-aware delivery boundaries.
 
-### X3DH
+### GhostProtocol 1
 
-Extended Triple Diffie-Hellman, a key agreement protocol used in Signal-style systems to establish a shared secret between parties authenticated through public keys.
+The fixed protocol profile used by Ghost Core. It is intended to avoid legacy fallback modes and ambiguous parser behavior by requiring accepted messages to follow one bounded security contract.
 
-### Double Ratchet
+### Continuous Hybrid State Evolution
 
-A cryptographic mechanism that continuously updates message keys to support forward secrecy and limit the impact of key compromise.
+Ghost Core's message-key evolution model, in which authenticated conversation transitions advance the state and derive fresh message material from classical, post-quantum and transcript-bound inputs where available.
+
+### Key Transparency
+
+A witnessed identity-history model in which account roots, active devices, temporary session-material publications, revocations and generation changes can be checked against signed and witnessed history rather than accepted from a single mutable directory.
+
+### OPAQUE
+
+An asymmetric password-authenticated key exchange used in the Ghost Core architecture for password authentication without allowing password-derived material to own, derive or recover communication roots or message keys.
 
 ### TOFU
 
