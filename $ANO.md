@@ -115,6 +115,14 @@ Unauthorized possession, copying, downloading, publication, redistribution, repu
 
 Nothing in this license restricts rights or legal defenses that cannot be waived or limited by applicable law. All permission requests must be approved in advance in writing by Imagine Tech Limited.
 
+### 0.13 Restriction, Suspension and Freezing of $ANO Transfers
+
+Imagine Tech Limited (the "Company") reserves the right, subject to applicable law and to the extent supported by the technical functionality of the applicable token smart contract, to restrict, suspend or freeze transfers of $ANO tokens, in whole or in part, on a temporary or permanent basis. This reservation applies to tokens acquired before the publication of this Whitepaper and to tokens acquired thereafter, including tokens held in private, externally controlled or non-custodial wallets.
+
+The Company may exercise this right where it reasonably determines that such action is necessary for security purposes, compliance with applicable legal or regulatory requirements, prevention of fraud or misuse, remediation of technical incidents, or protection of the ecosystem and its users. Such measures may apply to specified wallet addresses, specified transactions or token transfers generally, to the extent technically supported. Where permitted by applicable law and warranted by the circumstances, the Company may take such action without prior notice.
+
+Holding $ANO in a private or non-custodial wallet does not, by itself, exempt those tokens from transfer restrictions implemented at the token smart-contract level. This provision does not confer custody of a holder's private keys or authority over unrelated assets, nor does it represent that any restriction or freezing functionality has been implemented or verified. The scope and operation of any such functionality remain subject to verification of the deployed token smart contract and applicable law.
+
 ---
 
 ## 1. Executive Overview
